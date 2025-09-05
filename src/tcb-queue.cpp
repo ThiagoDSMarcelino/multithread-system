@@ -1,31 +1,31 @@
-#include "thread-queue.h"
+#include "tcb-queue.h"
 #include <cstdlib>
 
-ThreadQueue::ThreadQueue(int capacity)
+TCBQueue::TCBQueue(int capacity)
 {
     this->head = 0;
     this->tail = 0;
     this->count = 0;
     this->capacity = capacity;
-    this->data = (ThreadDescriptor **)malloc(sizeof(ThreadDescriptor) * capacity);
+    this->data = (TaskControlBlock **)malloc(sizeof(TaskControlBlock) * capacity);
 }
 
-ThreadQueue::~ThreadQueue()
+TCBQueue::~TCBQueue()
 {
     free(this->data);
 }
 
-bool ThreadQueue::is_full()
+bool TCBQueue::is_full()
 {
     return this->count == this->capacity;
 }
 
-bool ThreadQueue::is_empty()
+bool TCBQueue::is_empty()
 {
     return this->count == 0;
 }
 
-bool ThreadQueue::enqueue(ThreadDescriptor *descriptor)
+bool TCBQueue::enqueue(TaskControlBlock *descriptor)
 {
     if (this->is_full())
     {
@@ -39,21 +39,21 @@ bool ThreadQueue::enqueue(ThreadDescriptor *descriptor)
     return true;
 }
 
-ThreadDescriptor *ThreadQueue::dequeue()
+TaskControlBlock *TCBQueue::dequeue()
 {
     if (this->is_empty())
     {
         return NULL;
     }
 
-    ThreadDescriptor *thread = this->data[this->head];
+    TaskControlBlock *thread = this->data[this->head];
     this->head = (this->head + 1) % this->capacity;
     this->count--;
 
     return thread;
 }
 
-ThreadDescriptor *ThreadQueue::get_first()
+TaskControlBlock *TCBQueue::get_first()
 {
     if (this->is_empty())
     {

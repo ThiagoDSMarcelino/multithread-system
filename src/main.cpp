@@ -1,23 +1,22 @@
 #include <iostream>
-#include "thread-descriptor.h"
-#include "thread-queue.h"
+#include "tcb-queue.h"
 
 int main()
 {
-    ThreadQueue *queue = new ThreadQueue(10);
+    TCBQueue *queue = new TCBQueue(10);
 
-    ThreadDescriptor *t = queue->dequeue();
+    TaskControlBlock *tcb = queue->dequeue();
 
-    if (t == NULL)
+    if (tcb == NULL)
     {
         std::cout << "not dequeued\n";
     }
 
     for (int i = 0; i < 11; i++)
     {
-        ThreadDescriptor *thread = new ThreadDescriptor(i, 2);
+        tcb = new TaskControlBlock(i, 2);
 
-        bool success = queue->enqueue(thread);
+        bool success = queue->enqueue(tcb);
 
         if (!success)
         {
@@ -26,20 +25,20 @@ int main()
     }
 
     queue->dequeue();
-    queue->enqueue(new ThreadDescriptor(11, 2));
+    queue->enqueue(new TaskControlBlock(11, 2));
 
-    t = queue->dequeue();
+    tcb = queue->dequeue();
 
-    if (t == NULL)
+    if (tcb == NULL)
     {
         std::cout << "empty\n";
     }
 
-    while (t != NULL)
+    while (tcb != NULL)
     {
-        std::cout << t->get_id() << "\n";
-        delete t;
-        t = queue->dequeue();
+        std::cout << tcb->get_id() << "\n";
+        delete tcb;
+        tcb = queue->dequeue();
     }
 
     delete queue;

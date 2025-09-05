@@ -1,9 +1,14 @@
 # Multithread System
 
-## How to build
+## How to build the makefile
 
 ```bash
 cmake -S . -B ./build/
+```
+
+## How to build the project
+
+```bash
 cmake --build ./build/
 ```
 

@@ -1,8 +1,8 @@
-#include "thread-descriptor.h"
+#include "task-control-block.h"
 
 #include <stdexcept>
 
-ThreadDescriptor::ThreadDescriptor(int id, int priority)
+TaskControlBlock::TaskControlBlock(int id, int priority)
 {
     if (id < 0)
     {
@@ -13,12 +13,12 @@ ThreadDescriptor::ThreadDescriptor(int id, int priority)
     this->priority = priority;
 }
 
-int ThreadDescriptor::get_id()
+int TaskControlBlock::get_id()
 {
     return this->id;
 }
 
-int ThreadDescriptor::get_priority()
+int TaskControlBlock::get_priority()
 {
     return this->priority;
 }
