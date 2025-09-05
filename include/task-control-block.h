@@ -4,13 +4,13 @@
 class TaskControlBlock
 {
 public:
-    TaskControlBlock(int id, char *color, int start_time, int duration, int priority, int *events);
+    TaskControlBlock(int id, const char *color, int start_time, int duration, int priority, int *events);
     int get_id();
     int get_priority();
 
 private:
     int id;
-    char *color;
+    const char *color;
     int start_time;
     int duration;
     int priority;

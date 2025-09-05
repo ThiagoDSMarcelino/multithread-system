@@ -15,5 +15,5 @@ cmake --build ./build/
 ## How to run
 
 ```bash
-./build/MultithreadSystem
+./build/MultithreadSystem <caminho do arquivo de configuração>
 ```
