@@ -1,8 +1,11 @@
 #include "simulator-configuration.h"
-#include "utils.cpp"
 
+#include "utils.h"
 #include <fstream>
 #include <iostream>
+#include <stdexcept>
+#include <format>
+#include <algorithm>
 
 SimulatorConfiguration *SimulatorConfiguration::instance = nullptr;
 
@@ -19,6 +22,65 @@ SimulatorConfiguration::~SimulatorConfiguration()
     delete this->scheduler;
 }
 
+Scheduler *get_scheduler(std::string name)
+{
+    if (name != "round_robin")
+    {
+        throw std::runtime_error("Nome do escalonador é inválido");
+    }
+
+    return NULL;
+}
+
+int get_quantum(std::string value)
+{
+    int quantum;
+    if (!try_parse_int(value, quantum))
+    {
+        throw std::runtime_error("Valor do quantum é inválido");
+    }
+
+    if (quantum < 1)
+    {
+        throw std::runtime_error("Valor do quantum é menor que 1");
+    }
+
+    return quantum;
+}
+
+int get_id(std::string value, std::vector<int> *used_ids)
+{
+    int id;
+    if (!try_parse_int(value, id))
+    {
+        throw std::runtime_error(std::format("Valor {} não é valido como ID, apenas números são aceitos", value));
+    }
+
+    if (id < 1)
+    {
+        throw std::runtime_error("Somente valores positivos são aceitos como ID de uma tarefa");
+    }
+
+    if (std::find(used_ids->begin(), used_ids->end(), id) != used_ids->end())
+    {
+        throw std::runtime_error(std::format("ID {} está duplicado", id));
+    }
+
+    used_ids->push_back(id);
+
+    return id;
+}
+
+std::string get_color(std::string value)
+{
+    if (!is_color(value))
+    {
+        throw std::runtime_error(std::format("A cor {} é inválida", value));
+    }
+
+    return value;
+}
+
 void SimulatorConfiguration::load(const char *path)
 {
     std::ifstream configuration_file;
@@ -26,47 +88,58 @@ void SimulatorConfiguration::load(const char *path)
 
     if (!configuration_file.is_open())
     {
-        throw SimulatorConfigurationErrors::FILE_NOT_FOUND;
+        throw std::invalid_argument("Arquivo não encontrado");
     }
 
     std::string line;
 
     if (!std::getline(configuration_file, line))
     {
-        throw SimulatorConfigurationErrors::INCORRECT_FILE_FORMAT;
+        throw std::runtime_error("Formatação do arquivo de configuração está incorreta");
     }
 
     std::vector<std::string> values = split(line, ";");
 
     if (values.size() != 2)
     {
-        throw SimulatorConfigurationErrors::INCORRECT_FILE_FORMAT;
+        throw std::runtime_error("Formatação de uma tarefa está incorreto");
     }
 
-    std::string scheduler_name = values[0];
-    int quantum;
+    Scheduler *scheduler = get_scheduler(values[0]);
+    int quantum = get_quantum(values[1]);
 
-    if (!try_parse_int(values[1], quantum))
-    {
-        throw SimulatorConfigurationErrors::INVALID_QUANTUM_VALUE;
-    }
+    int id;
+    std::vector<int> used_ids;
 
-    if (quantum < 1)
-    {
-        throw SimulatorConfigurationErrors::QUANTUM_LESS_THAN_1;
-    }
+    std::string color;
 
-    // std::cout << "scheduler name: " << scheduler_name << " | quantum: " << quantum << std::endl;
-
+    TaskControlBlock *task;
     std::vector<TaskControlBlock *> tasks;
+
     while (std::getline(configuration_file, line))
     {
-        std::cout << line << std::endl;
+        values = split(line, ";");
+
+        if (values.size() < 5 || values.size() > 6)
+        {
+            throw std::runtime_error("Formatação de uma tarefa está incorreto");
+        }
+
+        id = get_id(values[0], &used_ids);
+        color = get_color(values[1]);
+
+        task = new TaskControlBlock(id, color, 0, 5, 2, NULL);
+        tasks.push_back(task);
+    }
+
+    for (auto task : tasks)
+    {
+        std::cout << task->get_id() << " " << task->get_priority() << std::endl;
     }
 
     configuration_file.close();
 
-    SimulatorConfiguration *configuration = new SimulatorConfiguration(nullptr, 200, tasks);
+    SimulatorConfiguration *configuration = new SimulatorConfiguration(nullptr, quantum, tasks);
 }
 
 SimulatorConfiguration *SimulatorConfiguration::get_instance()

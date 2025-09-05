@@ -2,7 +2,7 @@
 
 #include <stdexcept>
 
-TaskControlBlock::TaskControlBlock(int id, const char *color, int start_time, int duration, int priority, int *events)
+TaskControlBlock::TaskControlBlock(int id, std::string color, int start_time, int duration, int priority, int *events)
 {
     if (id < 0)
     {

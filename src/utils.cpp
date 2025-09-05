@@ -1,8 +1,7 @@
-#include <vector>
-#include <string>
+#include "utils.h"
+
 #include <algorithm>
-#include <cctype>
-#include <locale>
+#include <regex>
 
 inline void ltrim(std::string &s)
 {
@@ -71,4 +70,9 @@ bool try_parse_int(const std::string &str, int &value)
     {
         return false;
     }
+}
+
+bool is_color(const std::string &str)
+{
+    return std::regex_match(str, std::regex("^#\\w{6}$"));
 }

@@ -4,14 +4,6 @@
 #include "scheduler.h"
 #include <vector>
 
-enum SimulatorConfigurationErrors
-{
-    FILE_NOT_FOUND,
-    INCORRECT_FILE_FORMAT,
-    INVALID_QUANTUM_VALUE,
-    QUANTUM_LESS_THAN_1,
-};
-
 class SimulatorConfiguration
 {
 private:
