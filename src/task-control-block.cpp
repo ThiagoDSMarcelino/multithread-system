@@ -2,7 +2,7 @@
 
 #include <stdexcept>
 
-TaskControlBlock::TaskControlBlock(int id, int priority)
+TaskControlBlock::TaskControlBlock(int id, char *color, int start_time, int duration, int priority, int *events)
 {
     if (id < 0)
     {
@@ -10,7 +10,11 @@ TaskControlBlock::TaskControlBlock(int id, int priority)
     }
 
     this->id = id;
+    this->color = color;
+    this->start_time = start_time;
+    this->duration = duration;
     this->priority = priority;
+    this->events = events;
 }
 
 int TaskControlBlock::get_id()

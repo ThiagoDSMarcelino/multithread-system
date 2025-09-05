@@ -4,13 +4,17 @@
 class TaskControlBlock
 {
 public:
-    TaskControlBlock(int id, int priority);
+    TaskControlBlock(int id, char *color, int start_time, int duration, int priority, int *events);
     int get_id();
     int get_priority();
 
 private:
     int id;
+    char *color;
+    int start_time;
+    int duration;
     int priority;
+    int *events;
 };
 
 #endif
