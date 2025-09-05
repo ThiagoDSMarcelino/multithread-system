@@ -6,9 +6,20 @@
 class ThreadQueue
 {
 public:
-    void push(ThreadDescriptor *thread);
-    ThreadDescriptor *pop();
-    ThreadDescriptor *peek();
+    ThreadQueue(int capacity);
+    ~ThreadQueue();
+    bool enqueue(ThreadDescriptor *descriptor);
+    ThreadDescriptor *dequeue();
+    ThreadDescriptor *get_first();
+    bool is_full();
+    bool is_empty();
+
+private:
+    int capacity;
+    int head;
+    int tail;
+    int count;
+    ThreadDescriptor **data;
 };
 
 #endif
